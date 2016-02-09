@@ -89,8 +89,8 @@ namespace FieldEngineer.Controllers
                 //send to tag
                 await hub.SendAppleNativeNotificationAsync(alert, new[] {tag});
             }
-            return View();
 
+            return RedirectToAction("Index");
         }
 
         // POST: Admin/Create

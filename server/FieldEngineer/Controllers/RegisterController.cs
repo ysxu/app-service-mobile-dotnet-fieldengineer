@@ -39,7 +39,7 @@ namespace FieldEngineer.Controllers
                     notificationHubName);
         }
 
-        // GET api/UpdateTags/Id
+        // GET api/Register/Id
         [HttpGet]
         public async Task<List<string>> GetTagsByInstallationId(string Id)
         {
@@ -55,7 +55,7 @@ namespace FieldEngineer.Controllers
             }
         }
 
-        // POST api/UpdateTags/Id
+        // POST api/Register/Id
         [HttpPost]
         public async Task<HttpResponseMessage> AddTagsToInstallation(string Id)
         {
