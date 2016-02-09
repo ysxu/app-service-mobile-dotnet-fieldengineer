@@ -9,6 +9,11 @@ using System.Web;
 using System.Web.Mvc;
 using FieldEngineerLiteService.DataObjects;
 using FieldEngineerLiteService.Models;
+using System.Web.Http;
+using Microsoft.Azure.Mobile.Server;
+using Microsoft.Azure.Mobile.Server.Config;
+using Microsoft.Azure.NotificationHubs;
+using System.Configuration;
 
 namespace FieldEngineer.Controllers
 {
@@ -43,10 +48,55 @@ namespace FieldEngineer.Controllers
             return View();
         }
 
+        // GET: Admin/Push
+        public ActionResult Push()
+        {
+
+            // pull all persons from AAD security group
+
+            List<string> members = new List<string>();
+            members.Add("Mimi Xu");
+            members.Add("Test Person");
+            ViewData["members"] = new SelectList(members);
+
+            return View();
+        }
+
+        // Handle form in push
+        public async Task<ActionResult> HandlePush(string members, string location, string message)
+        {
+            string tag = "";
+
+            if (!(string.IsNullOrEmpty(members)))
+            {
+                tag = members.ToLower().Replace(" ", string.Empty);
+            }
+            else if (!string.IsNullOrEmpty(location))
+            {
+                tag = location.ToLower().Replace(" ", string.Empty);
+            }
+
+            NotificationHubClient hub = NotificationHubClient.CreateClientFromConnectionString("Endpoint=sb://anhdemomimins.servicebus.windows.net/;SharedAccessKeyName=DefaultFullSharedAccessSignature;SharedAccessKey=Y463FsBXLAkaTvEhJSMQUDA67zyBXo0TdC5ERhesl0Q=", "fieldengineerdemomimi");
+            var alert = "{\"aps\":{\"alert\":\"" + message + "\",\"sound\":\"default\"}}";
+
+            if (string.IsNullOrEmpty(tag))
+            {
+                //broadcast to all
+                await hub.SendAppleNativeNotificationAsync(alert);
+            }
+            else
+            {
+                //send to tag
+                await hub.SendAppleNativeNotificationAsync(alert, new[] {tag});
+            }
+            return View();
+
+        }
+
         // POST: Admin/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
+        [System.Web.Mvc.HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Create([Bind(Include = "Id,AgentId,JobNumber,Title,StartTime,EndTime,Status,CustomerName,CustomerAddress,CustomerPhoneNumber,WorkPerformed,Version,CreatedAt,UpdatedAt,Deleted")] Job job)
         {
@@ -78,7 +128,7 @@ namespace FieldEngineer.Controllers
         // POST: Admin/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
+        [System.Web.Mvc.HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Edit([Bind(Include = "Id,AgentId,JobNumber,Title,StartTime,EndTime,Status,CustomerName,CustomerAddress,CustomerPhoneNumber,WorkPerformed,CreatedAt,UpdatedAt,Version,Deleted")] Job job)
         {
@@ -107,7 +157,7 @@ namespace FieldEngineer.Controllers
         }
 
         // POST: Admin/Delete/5
-        [HttpPost, ActionName("Delete")]
+        [System.Web.Mvc.HttpPost, System.Web.Mvc.ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> DeleteConfirmed(string id)
         {
