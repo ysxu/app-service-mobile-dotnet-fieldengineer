@@ -14,29 +14,15 @@ using Newtonsoft.Json.Linq;
 
 namespace FieldEngineer.Controllers
 {
+    [MobileAppController]
     public class RegisterController : ApiController
     {
-
         private NotificationHubClient hubClient;
 
         protected override void Initialize(HttpControllerContext controllerContext)
         {
             base.Initialize(controllerContext);
-
-            // Get the Mobile App settings.
-            MobileAppSettingsDictionary settings =
-                Configuration.GetMobileAppSettingsProvider().GetMobileAppSettings();
-
-            // Get the Notification Hubs credentials for the Mobile App.
-            string notificationHubName = settings.NotificationHubName;
-            string notificationHubConnection = settings
-                .Connections[MobileAppSettingsKeys.NotificationHubConnectionString]
-                .ConnectionString;
-
-            // Create the notification hub client.
-            hubClient = NotificationHubClient
-                .CreateClientFromConnectionString(notificationHubConnection,
-                    notificationHubName);
+            hubClient = NotificationHubClient.CreateClientFromConnectionString("Endpoint=sb://anhdemomimins.servicebus.windows.net/;SharedAccessKeyName=DefaultListenSharedAccessSignature;SharedAccessKey=DNp1PtTziv2lG6+kH9LLFhYihFeBciLrnp1KPWfYauw=", "fieldengineerdemomimi");
         }
 
         // GET api/Register/Id
