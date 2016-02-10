@@ -52,7 +52,7 @@ namespace FieldEngineer.Controllers
         public ActionResult Push()
         {
 
-            // pull all persons from AAD security group
+            // TODO: pull all persons from AAD security group
 
             List<string> members = new List<string>();
             members.Add("Mimi Xu");
@@ -75,6 +75,7 @@ namespace FieldEngineer.Controllers
             {
                 tag = location.ToLower().Replace(" ", string.Empty);
             }
+
 
             NotificationHubClient hub = NotificationHubClient.CreateClientFromConnectionString("Endpoint=sb://anhdemomimins.servicebus.windows.net/;SharedAccessKeyName=DefaultFullSharedAccessSignature;SharedAccessKey=Y463FsBXLAkaTvEhJSMQUDA67zyBXo0TdC5ERhesl0Q=", "fieldengineerdemomimi");
             var alert = "{\"aps\":{\"alert\":\"" + message + "\",\"sound\":\"default\"}}";
