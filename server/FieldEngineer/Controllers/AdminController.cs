@@ -55,6 +55,7 @@ namespace FieldEngineer.Controllers
             // TODO: pull all persons from AAD security group
 
             List<string> members = new List<string>();
+            members.Add(" ");
             members.Add("Mimi Xu");
             members.Add("Test Person");
             ViewData["members"] = new SelectList(members);
