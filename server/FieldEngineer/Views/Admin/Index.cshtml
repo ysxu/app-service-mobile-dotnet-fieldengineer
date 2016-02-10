@@ -7,7 +7,15 @@
 <h2>Tasks for my agents</h2>
 
 <p>
-    @Html.ActionLink("Send Notifications", "Push")
+    
+    @if (User.Identity.IsAuthenticated)
+    {
+        @Html.ActionLink("Send Notifications", "Push")
+    }
+    else
+    {
+        @Html.RouteLink("Log In to Push", "Auth", new {action=string.Empty})
+    }
 </p>
 <p>
     @Html.ActionLink("Create New", "Create")
