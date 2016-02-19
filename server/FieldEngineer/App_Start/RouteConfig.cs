@@ -20,6 +20,7 @@ namespace FieldEngineer
             );
 
             routes.MapRoute("Auth", ".auth/login/aad", ".auth/login/aad");
+            routes.MapRoute("LogOut", ".auth/logout", ".auth/logout");
         }
     }
 }

@@ -14,6 +14,10 @@ using Microsoft.Azure.Mobile.Server;
 using Microsoft.Azure.Mobile.Server.Config;
 using Microsoft.Azure.NotificationHubs;
 using System.Configuration;
+using System.Net.Http;
+using Microsoft.Azure.ActiveDirectory.GraphClient;
+using Microsoft.IdentityModel.Clients.ActiveDirectory;
+using Microsoft.Azure.ActiveDirectory.GraphClient.Extensions;
 
 namespace FieldEngineer.Controllers
 {
@@ -49,19 +53,89 @@ namespace FieldEngineer.Controllers
         }
 
         // GET: Admin/Push
-        public ActionResult Push()
+        public async Task<ActionResult> Push()
         {
-
-            // TODO: pull all persons from AAD security group
-
             List<string> members = new List<string>();
             members.Add(" ");
-            members.Add("Mimi Xu");
-            members.Add("Test Person");
-            ViewData["members"] = new SelectList(members);
+            /*
+            // TODO: pull all persons from AAD security group
+            var client = new HttpClient();
+            var queryString = HttpUtility.ParseQueryString(string.Empty);
 
+            queryString["api-version"] = "1.6";
+            var uri = "https://graph.windows.net/myorganization/groups/{obj_id}/$links/members?" + queryString;
+
+            var response = await client.GetAsync(uri);
+
+            if (response.Content != null)
+            {
+                var responseBody = response.Content.ReadAsStringAsync().Result;
+                var dict = responseBody.Split(new[] { ','})
+            }
+            */
+
+            try
+            {
+                // The Azure AD Graph API for my directory is available at this URL.
+                const string serviceRootURL = "https://graph.windows.net/xumimixugmail.onmicrosoft.com";
+
+                // Instantiate an instance of ActiveDirectoryClient.
+                Uri serviceRoot = new Uri(serviceRootURL);
+                ActiveDirectoryClient adClient = new ActiveDirectoryClient(
+                    serviceRoot,
+                    async () => await GetAppTokenAsync());
+
+                IPagedCollection<IUser> pagedCollection = await adClient.Users.ExecuteAsync();
+                if (pagedCollection != null)
+                {
+                    do
+                    {
+                        List<IUser> userList = pagedCollection.CurrentPage.ToList();
+                        foreach (IUser user in userList)
+                        {
+                            members.Add(user.DisplayName);
+                        }
+                        pagedCollection = await pagedCollection.GetNextPageAsync();
+                    } while (pagedCollection != null);
+                }
+            }
+            catch (Exception e)
+            {
+                members.Add("Error");
+            }
+            ViewData["members"] = new SelectList(members);
             return View();
         }
+
+        private static async Task<string> GetAppTokenAsync()
+        {
+            // This is the URL the application will authenticate at.
+            const string authString = "https://login.windows.net/xumimixugmail.onmicrosoft.com";
+
+            // These are the credentials the application will present during authentication
+            // and were retrieved from the Azure Management Portal.
+            // *** Don't even try to use these - they have been deleted.
+            const string clientID = "4d3ed9f2-1bf2-48d0-9d29-a9e6b58bbd10";
+            const string clientSecret = "Sfayet4ySmtAaNnFXpUWMu6dfZXQ1p1IEz0+kCAPxFE=";
+
+            // The Azure AD Graph API is the "resource" we're going to request access to.
+            const string resAzureGraphAPI = "https://graph.windows.net";
+
+            // Instantiate an AuthenticationContext for my directory (see authString above).
+            AuthenticationContext authenticationContext = new AuthenticationContext(authString, false);
+
+            // Create a ClientCredential that will be used for authentication.
+            // This is where the Client ID and Key/Secret from the Azure Management Portal is used.
+            ClientCredential clientCred = new ClientCredential(clientID, clientSecret);
+
+            // Acquire an access token from Azure AD to access the Azure AD Graph (the resource)
+            // using the Client ID and Key/Secret as credentials.
+            AuthenticationResult authenticationResult = await authenticationContext.AcquireTokenAsync(resAzureGraphAPI, clientCred);
+
+            // Return the access token.
+            return authenticationResult.AccessToken;
+        }
+
 
         // Handle form in push
         public async Task<ActionResult> HandlePush(string members, string location, string message)
