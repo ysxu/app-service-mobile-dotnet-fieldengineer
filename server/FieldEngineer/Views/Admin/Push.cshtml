@@ -6,13 +6,9 @@
 <h2>Push</h2>
 @using (Html.BeginForm("HandlePush","Admin"))
 {
-    @Html.AntiForgeryToken()
-
     <div class="form-horizontal">
         <h4>Job</h4>
         <hr />
-        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-
         Select a member to push to: @Html.DropDownList("members")
         <br /><br />
         Push to all members in geo-location: @Html.TextBox("location", null)
