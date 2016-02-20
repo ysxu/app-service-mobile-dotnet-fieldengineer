@@ -53,41 +53,34 @@ namespace FieldEngineer.Controllers
         }
 
         // GET: Admin/Push
-        //[System.Web.Mvc.Authorize]
         public async Task<ActionResult> Push()
         {
             List<string> members = new List<string>();
             members.Add(" ");
 
-            try
+            // The Azure AD Graph API for my directory is available at this URL.
+            const string serviceRootURL = "https://graph.windows.net/xumimixugmail.onmicrosoft.com";
+
+            // Instantiate an instance of ActiveDirectoryClient.
+            Uri serviceRoot = new Uri(serviceRootURL);
+            ActiveDirectoryClient adClient = new ActiveDirectoryClient(
+                serviceRoot,
+                async () => await GetAppTokenAsync());
+
+            IPagedCollection<IUser> pagedCollection = await adClient.Users.ExecuteAsync();
+            if (pagedCollection != null)
             {
-                // The Azure AD Graph API for my directory is available at this URL.
-                const string serviceRootURL = "https://graph.windows.net/xumimixugmail.onmicrosoft.com";
-
-                // Instantiate an instance of ActiveDirectoryClient.
-                Uri serviceRoot = new Uri(serviceRootURL);
-                ActiveDirectoryClient adClient = new ActiveDirectoryClient(
-                    serviceRoot,
-                    async () => await GetAppTokenAsync());
-
-                IPagedCollection<IUser> pagedCollection = await adClient.Users.ExecuteAsync();
-                if (pagedCollection != null)
+                do
                 {
-                    do
+                    List<IUser> userList = pagedCollection.CurrentPage.ToList();
+                    foreach (IUser user in userList)
                     {
-                        List<IUser> userList = pagedCollection.CurrentPage.ToList();
-                        foreach (IUser user in userList)
-                        {
-                            members.Add(user.DisplayName);
-                        }
-                        pagedCollection = await pagedCollection.GetNextPageAsync();
-                    } while (pagedCollection != null);
-                }
+                        members.Add(user.DisplayName);
+                    }
+                    pagedCollection = await pagedCollection.GetNextPageAsync();
+                } while (pagedCollection != null);
             }
-            catch (Exception e)
-            {
-                members.Add("Error");
-            }
+
             ViewData["members"] = new SelectList(members);
             return View();
         }
