@@ -94,27 +94,18 @@ namespace FieldEngineer.Controllers
 
         private static async Task<string> GetAppTokenAsync()
         {
-            // This is the URL the application will authenticate at.
             const string authString = "https://login.windows.net/xumimixugmail.onmicrosoft.com";
-
-            // These are the credentials the application will present during authentication
-            // and were retrieved from the Azure Management Portal.
-            // *** Don't even try to use these - they have been deleted.
             const string clientID = "4d3ed9f2-1bf2-48d0-9d29-a9e6b58bbd10";
             const string clientSecret = "Sfayet4ySmtAaNnFXpUWMu6dfZXQ1p1IEz0+kCAPxFE=";
-
-            // The Azure AD Graph API is the "resource" we're going to request access to.
             const string resAzureGraphAPI = "https://graph.windows.net";
 
             // Instantiate an AuthenticationContext for my directory (see authString above).
             AuthenticationContext authenticationContext = new AuthenticationContext(authString, false);
 
             // Create a ClientCredential that will be used for authentication.
-            // This is where the Client ID and Key/Secret from the Azure Management Portal is used.
             ClientCredential clientCred = new ClientCredential(clientID, clientSecret);
 
             // Acquire an access token from Azure AD to access the Azure AD Graph (the resource)
-            // using the Client ID and Key/Secret as credentials.
             AuthenticationResult authenticationResult = await authenticationContext.AcquireTokenAsync(resAzureGraphAPI, clientCred);
 
             // Return the access token.

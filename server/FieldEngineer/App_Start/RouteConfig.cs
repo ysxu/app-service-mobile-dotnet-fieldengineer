@@ -19,7 +19,7 @@ namespace FieldEngineer
                 defaults: new { action = "Index", id = UrlParameter.Optional }
             );
 
-            routes.MapRoute("Auth", ".auth/login/aad", ".auth/login/aad");
+            routes.MapRoute("Auth", ".auth/login/aad?post_login_redirect_uri=/admin", ".auth/login/aad?post_login_redirect_uri=/admin");
             routes.MapRoute("LogOut", ".auth/logout", ".auth/logout");
         }
     }
