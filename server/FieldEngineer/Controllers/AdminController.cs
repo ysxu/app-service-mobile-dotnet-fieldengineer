@@ -21,7 +21,6 @@ using Microsoft.Azure.ActiveDirectory.GraphClient.Extensions;
 
 namespace FieldEngineer.Controllers
 {
-    [System.Web.Mvc.Authorize]
     public class AdminController : Controller
     {
         private JobDbContext db = new JobDbContext();
@@ -54,6 +53,7 @@ namespace FieldEngineer.Controllers
         }
 
         // GET: Admin/Push
+        [System.Web.Mvc.Authorize]
         public async Task<ActionResult> Push()
         {
             List<string> members = new List<string>();
