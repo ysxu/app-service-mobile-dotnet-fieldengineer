@@ -53,7 +53,7 @@ namespace FieldEngineer.Controllers
         }
 
         // GET: Admin/Push
-        [System.Web.Mvc.Authorize]
+        //[System.Web.Mvc.Authorize]
         public async Task<ActionResult> Push()
         {
             List<string> members = new List<string>();
