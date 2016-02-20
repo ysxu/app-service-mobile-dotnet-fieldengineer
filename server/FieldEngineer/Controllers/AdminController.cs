@@ -21,6 +21,7 @@ using Microsoft.Azure.ActiveDirectory.GraphClient.Extensions;
 
 namespace FieldEngineer.Controllers
 {
+    [System.Web.Mvc.Authorize]
     public class AdminController : Controller
     {
         private JobDbContext db = new JobDbContext();
@@ -57,22 +58,6 @@ namespace FieldEngineer.Controllers
         {
             List<string> members = new List<string>();
             members.Add(" ");
-            /*
-            // TODO: pull all persons from AAD security group
-            var client = new HttpClient();
-            var queryString = HttpUtility.ParseQueryString(string.Empty);
-
-            queryString["api-version"] = "1.6";
-            var uri = "https://graph.windows.net/myorganization/groups/{obj_id}/$links/members?" + queryString;
-
-            var response = await client.GetAsync(uri);
-
-            if (response.Content != null)
-            {
-                var responseBody = response.Content.ReadAsStringAsync().Result;
-                var dict = responseBody.Split(new[] { ','})
-            }
-            */
 
             try
             {
