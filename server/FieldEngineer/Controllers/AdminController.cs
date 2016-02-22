@@ -67,15 +67,26 @@ namespace FieldEngineer.Controllers
                 serviceRoot,
                 async () => await GetAppTokenAsync());
 
-            IPagedCollection<IUser> pagedCollection = await adClient.Users.ExecuteAsync();
+            //IGroup group 
+            IPagedCollection<IDirectoryObject> pagedCollection = await adClient.Groups
+                                    .GetByObjectId("802a838b-15cd-4e01-80a5-f4f223bfcce3")
+                                    .Members
+                                    .ExecuteAsync();
+
+            //IPagedCollection <IDirectoryObject> pagedCollection =  group.Members;
+            //IPagedCollection <IUser> pagedCollection = await adClient.Users.ExecuteAsync();
             if (pagedCollection != null)
             {
                 do
                 {
-                    List<IUser> userList = pagedCollection.CurrentPage.ToList();
-                    foreach (IUser user in userList)
+                    List<IDirectoryObject> userList = pagedCollection.CurrentPage.ToList();
+                    foreach (IDirectoryObject userObject in userList)
                     {
-                        members.Add(user.DisplayName);
+                        if (userObject is User)
+                        {
+                            User user = userObject as User;
+                            members.Add(user.DisplayName);
+                        }
                     }
                     pagedCollection = await pagedCollection.GetNextPageAsync();
                 } while (pagedCollection != null);
