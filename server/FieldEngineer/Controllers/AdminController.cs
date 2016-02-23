@@ -55,6 +55,7 @@ namespace FieldEngineer.Controllers
         // GET: Admin/Push
         public async Task<ActionResult> Push()
         {
+
             List<string> members = new List<string>();
             members.Add(" ");
 
@@ -124,11 +125,11 @@ namespace FieldEngineer.Controllers
 
             if (!(string.IsNullOrEmpty(members)))
             {
-                tag = members.ToLower().Replace(" ", string.Empty);
+                tag = members.ToLower().Replace(" ", "_");
             }
             else if (!string.IsNullOrEmpty(location))
             {
-                tag = location.ToLower().Replace(" ", string.Empty);
+                tag = location.ToLower().Replace(" ", "_");
             }
 
 
