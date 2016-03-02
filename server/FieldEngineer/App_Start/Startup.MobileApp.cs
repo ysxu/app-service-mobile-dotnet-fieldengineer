@@ -24,14 +24,16 @@ namespace FieldEngineer
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
 
+            app.UseWebApi(config);
+
             new MobileAppConfiguration()
                 .UseDefaultConfiguration()
+                .MapApiControllers()
                 .ApplyTo(config);
 
 
             Database.SetInitializer(new JobDbContextInitializer());
 
-            app.UseWebApi(config);
 
             // ----------------------------------------
             // UseDefaultConfiguration() equivalent to:
