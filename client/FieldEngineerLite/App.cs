@@ -14,8 +14,22 @@ using UIContext = global::Android.Content.Context;
 
 namespace FieldEngineerLite
 {
+	// +AUTH
+	public interface IPusher
+	{
+		Task<bool> RegisterPush();
+		Task<bool> UnregisterPush();
+	}
+
     public class App : Application
     {
+		public static IPusher Pusher { get; private set; }
+
+		public static void Init(IPusher pusher)
+		{
+			Pusher = pusher;
+		}
+
         public static UIContext UIContext { get; set; }
         
         public App()
@@ -23,6 +37,7 @@ namespace FieldEngineerLite
             MainPage = new JobMasterDetailPage ();
         }
     }
+
 
     public static class AppStyle
     {

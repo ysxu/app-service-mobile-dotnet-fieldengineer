@@ -6,12 +6,14 @@ using FieldEngineerLite.Models;
 using Microsoft.WindowsAzure.MobileServices.Eventing;
 using System.ComponentModel;
 using Microsoft.WindowsAzure.MobileServices.Sync;
+using Xamarin.Forms.Maps;
 
 namespace FieldEngineerLite.Views
 {
     public class JobListPage : ContentPage
     {
         private const bool DEFAULT_ONLINE_STATE = false;
+		private const bool DEFAULT_PUSH_STATE = false;
         public ListView JobList;
         private JobService jobService;
         private long pendingChanges;
@@ -50,14 +52,14 @@ namespace FieldEngineerLite.Views
                 HorizontalOptions = LayoutOptions.CenterAndExpand,
                 VerticalOptions = LayoutOptions.CenterAndExpand,
                 Text = "Refresh",
-                FontSize = Device.GetNamedSize(NamedSize.Medium, typeof(Button)),
-                WidthRequest = 120,
+				FontSize = Device.GetNamedSize(NamedSize.Medium, typeof(Button)),
+                WidthRequest = 80,
             };
 
             syncButton.Clicked += async (object sender, EventArgs e) =>
             {
                 try
-                {
+				{					
                     syncButton.Text = "Refreshing...";
                     await jobService.SyncAsync();
                     await this.RefreshAsync();
@@ -67,6 +69,38 @@ namespace FieldEngineerLite.Views
                     syncButton.Text = "Refresh";
                 }
             };
+
+
+			// Push
+
+			var pushLabel = new Label { Text = "Push", VerticalTextAlignment = TextAlignment.Center };
+			var pushSwitch = new Switch { IsToggled = DEFAULT_PUSH_STATE, VerticalOptions = LayoutOptions.Center };
+
+			pushSwitch.Toggled += async (sender, e) =>
+			{
+				if (pushSwitch.IsToggled)
+				{
+					try
+					{
+						if (App.Pusher != null)
+						{
+							await App.Pusher.RegisterPush();
+						}
+					}
+					catch (Exception) {
+						//
+					}
+				}
+				else {
+					try
+					{
+						await App.Pusher.UnregisterPush();
+					}
+					catch (Exception) {
+						//
+					}
+				}
+			};
             
             this.Title = "Appointments";
 
@@ -89,7 +123,7 @@ namespace FieldEngineerLite.Views
                         Orientation = StackOrientation.Horizontal,
                         HorizontalOptions = LayoutOptions.StartAndExpand,
                         Children = {
-                            syncButton, new Label { Text = "   "}, onlineLabel, onlineSwitch
+							syncButton, new Label { Text = " "}, onlineLabel, onlineSwitch, new Label {Text = " "}, pushLabel, pushSwitch
                         }
                     },
                     JobList,
@@ -120,6 +154,7 @@ namespace FieldEngineerLite.Views
             if (obj.Name == "JobChanged") {
                 Device.BeginInvokeOnMainThread(async () => {
                     await RefreshAsync();
+
                 });
             }
         }
