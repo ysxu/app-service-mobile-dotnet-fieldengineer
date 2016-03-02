@@ -6,11 +6,12 @@ author: lindydonna
 
 # Azure App Service field engineer sample (web admin portal with AAD auth and push to AAD security group/geo-location; auth and offline-sync enabled Xamarin.Forms client)
 
-### Additions to original Field Engineer app at https://github.com/Azure-Samples/app-service-mobile-dotnet-fieldengineer
+**Additions to original Field Engineer app at https://github.com/Azure-Samples/app-service-mobile-dotnet-fieldengineer:**
 
 1. AAD Authentication on client and server
 2. Push enabled on client with Azure Notification Hubs
 3. Admin portal is able to push to 1. all app users; 2. targeted members of the admin's AAD Security Group; and 3. geo-location (City State) where the device is in
+
 
 **Try out a simple version of this demo and other Xamarin demos on ["Try App Service"](https://aka.ms/trymobile).**
 
